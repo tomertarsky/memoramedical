@@ -1,0 +1,55 @@
+
+
+<!-- Vapi SDK -->
+<script>
+  var vapiInstance = null;
+  const assistant = "7c568d36-8b1e-480a-b1c0-dd84a05bdcee";
+  const apiKey = "7d81bb68-252b-4bae-aa87-35b008490804";
+
+  // Custom button styles
+  const customButtonStyle = {
+    background: 'linear-gradient(135deg, #4f46e5 0%, #6366f1 100%)',
+    borderRadius: '25px',
+    padding: '16px 32px',
+    fontSize: '16px',
+    fontWeight: '700',
+    boxShadow: '0 4px 15px rgba(79, 70, 229, 0.4)',
+    color: '#ffffff',
+    border: 'none',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease-in-out'
+  };
+
+  // Custom panel styles
+  const customPanelStyle = {
+    background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+    borderRadius: '16px',
+    border: '2px solid #e1e8ed',
+    backdropFilter: 'blur(10px)',
+  };
+
+  const buttonConfig = {
+    style: customButtonStyle,
+    panelStyle: customPanelStyle
+  };
+
+  (function (d, t) {
+    var g = document.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    g.src =
+      "https://cdn.jsdelivr.net/gh/VapiAI/html-script-tag@latest/dist/assets/index.js";
+    g.defer = true;
+    g.async = true;
+    s.parentNode.insertBefore(g, s);
+
+    g.onload = function () {
+      vapiInstance = window.vapiSDK.run({
+        apiKey: apiKey, // mandatory
+        assistant: assistant, // mandatory
+        config: buttonConfig, // optional
+      });
+      console.log('Vapi SDK loaded and initialized successfully');
+    };
+  })(document, "script");
+
+</script>

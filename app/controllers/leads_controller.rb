@@ -13,6 +13,10 @@ class LeadsController < ApplicationController
     end
   end
 
+  def chat
+    # AI chat page with Vapi widget
+  end
+
   private
 
   def lead_params
