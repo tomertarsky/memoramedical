@@ -11,6 +11,9 @@ Rails.application.routes.draw do
   # AI chat page with voice call
   get "chat" => "leads#chat", as: :chat
   
+  # Research page
+  get "research" => "research#index", as: :research
+  
   # API routes
   namespace :api do
     post 'retell_access_token', to: 'retell#access_token'
