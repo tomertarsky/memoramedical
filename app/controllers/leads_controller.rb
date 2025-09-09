@@ -14,7 +14,8 @@ class LeadsController < ApplicationController
   end
 
   def chat
-    # AI chat page with Vapi widget
+    # Load the latest agent config or create a new one
+    @agent_config = AgentConfig.last || AgentConfig.new
   end
 
   private

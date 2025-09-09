@@ -1,55 +1,304 @@
+<% content_for :title, "Configure AI Agent - Memora Medical" %>
+<% content_for :description, "Configure your AI agent settings for Memora Medical companion devices" %>
 
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+  <div class="max-w-2xl mx-auto w-full">
+    <div class="text-center mb-8">
+      <!-- Company Logo/Name -->
+      <div class="flex justify-center mb-6">
+        <div class="flex items-center">
+          <div class="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center mr-3">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+            </svg>
+          </div>
+          <h1 class="text-2xl font-bold text-gray-900">Memora Medical Devices</h1>
+        </div>
+      </div>
 
-<!-- Vapi SDK -->
-<script>
-  var vapiInstance = null;
-  const assistant = "7c568d36-8b1e-480a-b1c0-dd84a05bdcee";
-  const apiKey = "7d81bb68-252b-4bae-aa87-35b008490804";
+    </div>
 
-  // Custom button styles
-  const customButtonStyle = {
-    background: 'linear-gradient(135deg, #4f46e5 0%, #6366f1 100%)',
-    borderRadius: '25px',
-    padding: '16px 32px',
-    fontSize: '16px',
-    fontWeight: '700',
-    boxShadow: '0 4px 15px rgba(79, 70, 229, 0.4)',
-    color: '#ffffff',
-    border: 'none',
-    cursor: 'pointer',
-    transition: 'all 0.2s ease-in-out'
-  };
+    <!-- Voice Call Section -->
+    <div class="bg-white rounded-2xl shadow-xl p-6 mb-6">
+      <div class="text-center">
+        <div class="mb-4">
+          <div class="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-900 mb-2">Talk to Our AI Assistant</h3>
+          <p class="text-gray-600 mb-6">Start a voice conversation about our companion devices for seniors with dementia</p>
+        </div>
+        
+        <button 
+          id="start-voice-call"
+          onclick="startVoiceCall()" 
+          class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-8 rounded-full transition-all duration-200 transform hover:scale-105 shadow-lg">
+          🎤 Start Voice Call
+        </button>
+        
+        <button 
+          id="end-voice-call"
+          onclick="endVoiceCall()" 
+          style="display: none;"
+          class="bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-8 rounded-full transition-all duration-200 transform hover:scale-105 shadow-lg">
+          📞 End Call
+        </button>
 
-  // Custom panel styles
-  const customPanelStyle = {
-    background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-    borderRadius: '16px',
-    border: '2px solid #e1e8ed',
-    backdropFilter: 'blur(10px)',
-  };
+        <div class="mt-4 text-sm text-gray-500">
+          <p>💡 Make sure your microphone is enabled for the best experience</p>
+        </div>
+      </div>
+    </div>
 
-  const buttonConfig = {
-    style: customButtonStyle,
-    panelStyle: customPanelStyle
-  };
+    <!-- Agent Config Form -->
+    <div class="bg-white rounded-2xl shadow-xl p-6">
+      <%= form_with model: @agent_config, local: true, class: "space-y-4" do |form| %>
+        <% if @agent_config.errors.any? %>
+          <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
+            <h3 class="font-medium mb-2"><%= pluralize(@agent_config.errors.count, "error") %> prohibited this configuration from being saved:</h3>
+            <ul class="list-disc list-inside space-y-1">
+              <% @agent_config.errors.each do |error| %>
+                <li><%= error.full_message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
 
-  (function (d, t) {
-    var g = document.createElement(t),
-      s = d.getElementsByTagName(t)[0];
-    g.src =
-      "https://cdn.jsdelivr.net/gh/VapiAI/html-script-tag@latest/dist/assets/index.js";
-    g.defer = true;
-    g.async = true;
-    s.parentNode.insertBefore(g, s);
+        <div>
+          <%= form.label :prompt, "Agent Prompt", class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <p class="text-xs text-gray-500 mb-2">Define how the AI agent should behave during conversations.</p>
+          <%= form.textarea :prompt,
+              rows: 4,
+              placeholder: "You are a helpful medical assistant for Memora Medical Devices...",
+              class: "w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 resize-none" %>
+        </div>
 
-    g.onload = function () {
-      vapiInstance = window.vapiSDK.run({
-        apiKey: apiKey, // mandatory
-        assistant: assistant, // mandatory
-        config: buttonConfig, // optional
-      });
-      console.log('Vapi SDK loaded and initialized successfully');
-    };
-  })(document, "script");
+        <div>
+          <%= form.label :speech_speed, "Speech Speed (0.5 - 2.0)", class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <p class="text-xs text-gray-500 mb-2">Control speaking pace. 1.0 is normal speed.</p>
+          <%= form.number_field :speech_speed,
+              step: 0.1,
+              min: 0.5,
+              max: 2.0,
+              placeholder: "1.0",
+              class: "w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200" %>
+        </div>
 
+        <div class="pt-2">
+          <%= form.submit "Update AI Agent",
+              class: "w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 transform hover:scale-105 shadow-lg" %>
+        </div>
+      <% end %>
+
+      <!-- Info Section -->
+      <div class="mt-4 pt-4 border-t border-gray-200">
+        <div class="flex items-start space-x-2">
+          <div class="flex-shrink-0">
+            <svg class="w-4 h-4 text-indigo-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-xs font-medium text-gray-900 mb-1">How it works</h3>
+            <p class="text-xs text-gray-600">Saves configuration and updates your Retell AI agent instantly.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Back to Home Link -->
+    <div class="text-center mt-6">
+      <%= link_to root_path, class: "inline-flex items-center text-indigo-600 hover:text-indigo-700 font-medium transition duration-200" do %>
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        Back to Home
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<!-- Retell Voice Call SDK - Using Working CDN Approach -->
+<script type="module">
+// Import from CDN that works
+import { RetellWebClient } from "https://cdn.skypack.dev/retell-client-js-sdk@2.0.7";
+
+// Use window object to persist across Turbo navigations
+window.retellWebClient = window.retellWebClient || null;
+window.isCallActive = window.isCallActive || false;
+
+// Initialize Retell Web Client - exactly as per docs
+function initializeRetellClient() {
+  try {
+    console.log('Attempting to initialize Retell client...');
+    console.log('RetellWebClient available:', typeof RetellWebClient !== 'undefined');
+    console.log('Current retellWebClient:', window.retellWebClient);
+    
+    // Check if RetellWebClient is available
+    if (typeof RetellWebClient === 'undefined') {
+      console.error('RetellWebClient is not loaded. CDN import may have failed.');
+      console.log('Retrying in 1 second...');
+      setTimeout(initializeRetellClient, 1000);
+      return;
+    }
+    
+    // Don't reinitialize if already exists and working
+    if (window.retellWebClient) {
+      console.log('Retell client already exists, skipping initialization');
+      return;
+    }
+    
+    window.retellWebClient = new RetellWebClient();
+    console.log('Retell client initialized successfully');
+  
+  // Event listeners
+  window.retellWebClient.on("call_started", () => {
+    console.log("Voice call started");
+    window.isCallActive = true;
+    updateCallButton(true);
+  });
+
+  window.retellWebClient.on("call_ended", () => {
+    console.log("Voice call ended");
+    window.isCallActive = false;
+    updateCallButton(false);
+  });
+
+  window.retellWebClient.on("error", (error) => {
+    console.error("Voice call error:", error);
+    alert("Voice call error. Please check your microphone permissions and try again.");
+    window.isCallActive = false;
+    updateCallButton(false);
+  });
+
+  window.retellWebClient.on("agent_start_talking", () => {
+    console.log("Agent started talking");
+  });
+
+  window.retellWebClient.on("agent_stop_talking", () => {
+    console.log("Agent stopped talking");
+  });
+  
+  } catch (error) {
+    console.error('Error initializing Retell client:', error);
+    alert('Failed to initialize voice client. Please refresh the page and try again.');
+  }
+}
+
+// Update button states
+function updateCallButton(callActive) {
+  const startBtn = document.getElementById('start-voice-call');
+  const endBtn = document.getElementById('end-voice-call');
+  
+  if (callActive) {
+    startBtn.style.display = 'none';
+    endBtn.style.display = 'inline-block';
+  } else {
+    startBtn.style.display = 'inline-block';
+    endBtn.style.display = 'none';
+  }
+}
+
+// Get access token from server and start call
+async function startVoiceCall() {
+  try {
+    if (window.isCallActive) return;
+    
+    // Check if client is initialized
+    console.log('Checking retellWebClient:', window.retellWebClient);
+    console.log('typeof retellWebClient:', typeof window.retellWebClient);
+    
+    if (!window.retellWebClient || typeof window.retellWebClient.startCall !== 'function') {
+      console.error('Voice client not properly initialized:', window.retellWebClient);
+      alert('Voice client is not initialized. Please wait a moment and try again.');
+      return;
+    }
+    
+    console.log('Requesting access token...');
+    
+    // Call server to get access token
+    const response = await fetch('/api/retell_access_token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+      },
+      body: JSON.stringify({
+        agent_id: 'agent_58c4fba4908979f2eb68148515'
+      })
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to get access token');
+    }
+    
+    const data = await response.json();
+    console.log('Received access token:', data);
+    
+    if (!data.access_token) {
+      throw new Error('No access token received from server');
+    }
+    
+    console.log('Starting voice call...');
+    
+    // Start the call
+    await window.retellWebClient.startCall({
+      accessToken: data.access_token,
+      sampleRate: 24000,
+      captureDeviceId: "default"
+    });
+    
+    console.log('Voice call started successfully');
+    
+  } catch (error) {
+    console.error('Error starting voice call:', error);
+    alert('Could not start voice call. Please try again.');
+  }
+}
+
+// End voice call
+function endVoiceCall() {
+  try {
+    if (window.retellWebClient && window.isCallActive) {
+      window.retellWebClient.stopCall();
+    }
+  } catch (error) {
+    console.error('Error ending voice call:', error);
+  }
+}
+
+// Make functions globally available
+window.startVoiceCall = startVoiceCall;
+window.endVoiceCall = endVoiceCall;
+
+// Initialize when page loads with a small delay for module loading
+document.addEventListener('DOMContentLoaded', function() {
+  // Small delay to ensure CDN module is fully loaded
+  setTimeout(initializeRetellClient, 500);
+});
+
+// Also initialize on Turbo page loads (for Rails redirects)
+document.addEventListener('turbo:load', function() {
+  console.log('Turbo:load event fired');
+  console.log('Current retellWebClient state:', window.retellWebClient);
+  
+  // Only reset if we're on the chat page and client isn't working
+  if (window.location.pathname.includes('/chat')) {
+    console.log('On chat page, checking client status...');
+    
+    // Reset call state but keep working client
+    window.isCallActive = false;
+    updateCallButton(false);
+    
+    // Only reinitialize if client doesn't exist
+    if (!window.retellWebClient) {
+      console.log('No client exists, initializing...');
+      setTimeout(initializeRetellClient, 500);
+    } else {
+      console.log('Client exists, keeping current instance');
+    }
+  }
+});
 </script>
